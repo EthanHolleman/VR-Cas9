@@ -57,8 +57,17 @@ rule score_targets:
         'output/scored-targets/VR-{num_inserts}.targets.scored'
     shell:'''
      java -Xmx4g -jar {input.ff} score --input {input.discovered_targets} \
-     --output {output} --scoringMetrics doench2014ontarget,doench2016cfd,dangerous,hsu2013,minot \
+     --output {output} --scoringMetrics doench2014ontarget,doench2016cfd,dangerous,hsu2013,minot,rank \
      --database {input.database}
     '''
+
+rule add_gRNA:
+    conda:
+        '../envs/python.yml'
+    input:
+       'output/scored-targets/VR-{num_inserts}.targets.scored'
+    output:
+        'output/scored-targets-gRNA/VR-{num_inserts}.gRNA.targets.scored'
+    script:'../scripts/add_gRNA.py'
 
 

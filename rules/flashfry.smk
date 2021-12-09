@@ -78,6 +78,8 @@ rule append_NEB_kit_seqs:
         'output/scored-targets-pamless/VR-{num_inserts}.pamless.targets.scored.tsv'
     output:
         'output/scored-targets-NEB/VR-{num_inserts}.NEB.targets.scored.tsv'
+    params:
+        config=config
     script:'../scripts/add_NEB_seqs.py'
 
 

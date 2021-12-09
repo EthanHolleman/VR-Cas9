@@ -61,13 +61,24 @@ rule score_targets:
      --database {input.database}
     '''
 
-rule add_gRNA:
+rule add_pamless:
     conda:
         '../envs/python.yml'
     input:
        'output/scored-targets/VR-{num_inserts}.targets.scored'
     output:
-        'output/scored-targets-gRNA/VR-{num_inserts}.gRNA.targets.scored'
-    script:'../scripts/add_gRNA.py'
+        'output/scored-targets-pamless/VR-{num_inserts}.pamless.targets.scored.tsv'
+    script:'../scripts/pamless.py'
+
+
+rule append_NEB_kit_seqs:
+    conda:
+        '../envs/python.yml'
+    input:
+        'output/scored-targets-pamless/VR-{num_inserts}.pamless.targets.scored.tsv'
+    output:
+        'output/scored-targets-NEB/VR-{num_inserts}.NEB.targets.scored.tsv'
+    script:'../scripts/add_NEB_seqs.py'
+
 
 

@@ -26,7 +26,7 @@ def add_target_no_pam_column(df):
     # "cbind" the pamless columns to the old dataframe
     # https://stackoverflow.com/questions/33088010/pandas-column-bind-cbind-two-data-frames
     df_c = pd.concat(
-        [df.reset_index(drop=True), pd.Dataframe(pamless_columns)], axis=1
+        [df.reset_index(drop=True), pd.DataFrame(pamless_columns)], axis=1
         )
     return df_c
         
@@ -37,8 +37,11 @@ def main():
     score_file = str(snakemake.input)
     df = read_df(score_file)
     df_no_pam = add_target_no_pam_column(df)
+    print(df_no_pam)
+    assert 'target_no_pam' in df_no_pam.columns
+    
     df_no_pam.dropna(inplace=True)
-    df.to_csv(str(snakemake.output), sep='\t', index=False)
+    df_no_pam.to_csv(str(snakemake.output), sep='\t', index=False)
 
 
 if __name__ == '__main__':

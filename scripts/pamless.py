@@ -11,22 +11,25 @@ def read_df(filepath):
 def add_target_no_pam_column(df):
     
     pamless_columns = []
-    for each_target, strand in zip(list(df['targets']), list(df['orientation'])):
-        if strand == 'FWD':  # pam is last three nucs
-            row = {
-                'target_no_pam': each_target[:-3],
-                'start_no_pam': '',
-                'end_no_pam': ''
-            }
-        elif strand == 'REV':
-            pass
-        else:
-            raise TypeError('Orientation must be FWD or REV')
+    for index, row in df.iterrows():
         
+        # FlashFry outputs all sequences in the forward orientation even
+        # if the target site is on the reverse strand. So the PAM site will
+        # always be at the end of the sequence string.
+        row = {
+            'target_no_pam': each_target[:-3],
+            'start_no_pam': row['start'],
+            'end_no_pam': row['end'] - 3
+        }
+        pamless_columns.append(row)
+    
+    # "cbind" the pamless columns to the old dataframe
+    # https://stackoverflow.com/questions/33088010/pandas-column-bind-cbind-two-data-frames
+    df_c = pd.concat(
+        [df.reset_index(drop=True), pd.Dataframe(pamless_columns)], axis=1
+        )
+    return df_c
         
-    df['target_no_pam'] = [l[:-3] for l in list(df['target'])]
-    df['end_no_pam'] = df['stop'] - 3
-    return df
 
 
 def main():

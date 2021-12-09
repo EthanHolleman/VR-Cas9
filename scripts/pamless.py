@@ -19,7 +19,7 @@ def add_target_no_pam_column(df):
         row = {
             'target_no_pam': row[:-3],
             'start_no_pam': row['start'],
-            'end_no_pam': row['end'] - 3
+            'end_no_pam': row['stop'] - 3
         }
         pamless_columns.append(row)
     

@@ -17,7 +17,7 @@ def add_target_no_pam_column(df):
         # if the target site is on the reverse strand. So the PAM site will
         # always be at the end of the sequence string.
         row = {
-            'target_no_pam': each_target[:-3],
+            'target_no_pam': row[:-3],
             'start_no_pam': row['start'],
             'end_no_pam': row['end'] - 3
         }

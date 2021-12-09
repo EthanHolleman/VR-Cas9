@@ -1,0 +1,4 @@
+# Additional sequences requires for cloning in NEB EnGen kit
+# https://www.neb.com/protocols/2016/05/11/engen-sqrna-synthesis-kit-s-pyogenes-protocol-e3322
+T7_PROMOTER: "TTCTAATACGACTCACTATA" 
+THREE_PRIME_OVERLAP: "GTTTTAGAGCTAGA"

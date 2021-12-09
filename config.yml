@@ -2,3 +2,10 @@
 # https://www.neb.com/protocols/2016/05/11/engen-sqrna-synthesis-kit-s-pyogenes-protocol-e3322
 T7_PROMOTER: "TTCTAATACGACTCACTATA" 
 THREE_PRIME_OVERLAP: "GTTTTAGAGCTAGA"
+
+GUIDES_PER_CONSTRUCT: 5  # number of gRNA oligos to select per construct.
+MAX_DIST_FROM_START: 1000  # Distance from the start of the construct sequence
+                           # to the furthest gRNA start. This defines the window
+                           # that gRNAs will be selected from. The workflow
+                           # will attempt to evenly distribute rRNAs within
+                           # this window. 

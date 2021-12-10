@@ -9,3 +9,10 @@ MAX_DIST_FROM_START: 1000  # Distance from the start of the construct sequence
                            # that gRNAs will be selected from. The workflow
                            # will attempt to evenly distribute rRNAs within
                            # this window. 
+
+MIN_DIST: 100
+MAX_DIST: 1000
+NUM_TARGETS: 5
+TARGET_STRAND: "FWD"
+NICKED_STRAND_IS_TARGET: False
+

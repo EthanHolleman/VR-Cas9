@@ -12,6 +12,12 @@ The workflow can be run most easily with `snakemake -j 1 --use-conda`.
 To run the workflow on a cluster reconfigure `cluster.yml` and `run.sh` to
 work with your system (currently configured for SLURM (UC Davis CRICK)).
 
+### Configuration
+
+Workflow configuration is done by making changes in the `config.yml` file.
+Current parameters should be considered default. All parameters are explained
+within `config.yml` itself.
+
 ## Output
 
 ```

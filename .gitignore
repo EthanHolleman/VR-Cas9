@@ -4,3 +4,4 @@ logs/
 *.err
 output/
 software/
+scripts/find_PAMs.py

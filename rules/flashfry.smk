@@ -83,4 +83,16 @@ rule append_NEB_kit_seqs:
     script:'../scripts/add_NEB_seqs.py'
 
 
+rule select_targets:
+    conda:
+        '../envs/python.yml'
+    input:
+        'output/scored-targets-NEB/VR-{num_inserts}.NEB.targets.scored.tsv'
+    output:
+        'output/selected-scored-NEB/VR-{num_inserts}.NEB.selected.targets.scored.tsv'
+    params:
+        config=config
+    script:'../scripts/select_targets.py'
+
+
 

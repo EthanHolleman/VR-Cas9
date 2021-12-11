@@ -4,8 +4,8 @@ rule download_sliced_sequences:
     output:
         expand(
             'output/sequences/constructs/{series}/{series_prefix}-{insert_number}.gb',
-            insert_number=list(range(1, NUM_INSERTS+1)), series=['T7_initiation_series'],
-            series_prefix=['T7_init_VR']
+            insert_number=list(range(1, NUM_INSERTS+1)), series=[config['SERIES_NAME']],
+            series_prefix=config['SERIES_PREFIX']
         )
 
     shell:'''

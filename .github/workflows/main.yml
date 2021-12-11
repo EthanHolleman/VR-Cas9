@@ -26,5 +26,6 @@ jobs:
           conda create -c conda-forge -c bioconda -n snakemake snakemake
       - name: Run workflow
         run: |
+          source ~/anaconda3/etc/profile.d/conda.sh
           conda activate snakemake
           snakemake -j 1 --configfile config.yml

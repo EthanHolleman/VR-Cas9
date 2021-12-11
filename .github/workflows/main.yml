@@ -28,4 +28,5 @@ jobs:
         run: |
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate snakemake
+          ls
           snakemake -j 1 --configfile config.yml

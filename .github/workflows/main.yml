@@ -29,11 +29,11 @@ jobs:
           mamba create -c bioconda -c conda-forge -n snakemake snakemake-minimal
       - name: List files in the repository
         uses: actions/checkout@v2
-        run: |
+      - run: |
           ls ${{ github.workspace }}
       - name: Run workflow
         uses: actions/checkout@v2
-        run: |
+      - run: |
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate snakemake
           snakemake -j 1 --configfile config.yml --use-conda

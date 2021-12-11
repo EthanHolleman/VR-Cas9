@@ -17,3 +17,15 @@ TARGET_STRAND: "FWD"  # Strand that should be nicked
 NICKED_STRAND_IS_TARGET: False  # Set to true of the Cas9 being used nicks the
                                 # target strand, set to false otherwise.
 
+SERIES_NAME: "T7_initiation_series"  # TODO: Make so don't need these
+SERIES_PREFIX: "T7_init_VR"
+
+PLASMID_MAP_RENAME_SCHEME: "label-scheme.yml"  # Defines the labels and colors
+                                               # that will be used for features
+                                               # when drawing plasmids maps.
+                                               # This is needed because we do
+                                               # not want to draw all features
+                                               # in the base genbank files and
+                                               # some features have long
+                                               # ugly names that make plasmid
+                                               # maps hard to read.

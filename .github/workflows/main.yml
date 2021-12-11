@@ -11,6 +11,7 @@ jobs:
         python-version: [3.8]
 
     steps:
+      - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
           wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -24,9 +25,11 @@ jobs:
           conda config --add channels conda-forge
           conda config --add channels bioconda
           conda create -c conda-forge -c bioconda -n snakemake snakemake
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
       - name: Run workflow
         run: |
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate snakemake
-          ls
-          snakemake -j 1 --configfile config.yml
+          snakemake -j 1 --configfile config.yml --use-conda

@@ -3,6 +3,7 @@ from Bio import SeqIO
 
 
 def get_ideal_points(min_dist, max_dist, number_targets):
+    
     assert max_dist > min_dist
     usable_length = max_dist - min_dist
     step = int(usable_length / number_targets)

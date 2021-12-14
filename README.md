@@ -1,4 +1,7 @@
 # VR-Cas9
+
+![Workflow](https://github.com/EthanHolleman/VR-Cas9/actions/workflows/main.yml/badge.svg)
+
 Identify potential CRISPR-Cas9 targets in VR sequences using [FlashFry](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-018-0545-0).
 
 ## Dependencies

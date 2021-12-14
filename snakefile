@@ -6,8 +6,6 @@ include: 'rules/flashfry.smk'
 include: 'rules/get_seqs.smk'
 
 
-
-
 rule all:
     input:
         expand(

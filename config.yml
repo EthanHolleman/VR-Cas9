@@ -3,16 +3,10 @@
 T7_PROMOTER: "TTCTAATACGACTCACTATA" 
 THREE_PRIME_OVERLAP: "GTTTTAGAGCTAGA"
 
-GUIDES_PER_CONSTRUCT: 5  # number of gRNA oligos to select per construct.
-MAX_DIST_FROM_START: 1000  # Distance from the start of the construct sequence
-                           # to the furthest gRNA start. This defines the window
-                           # that gRNAs will be selected from. The workflow
-                           # will attempt to evenly distribute rRNAs within
-                           # this window. 
 
-MIN_DIST: 100  # min distance from start of seq to select targets
-MAX_DIST: 1000  # max distance from start of seq to select targets
-NUM_TARGETS: 5  # number of targets to select
+MIN_DIST: 20  # min distance from start of seq to select targets
+MAX_DIST: 3300  # max distance from start of seq to select targets
+NUM_TARGETS: 15  # number of targets to select
 TARGET_STRAND: "FWD"  # Strand that should be nicked
 NICKED_STRAND_IS_TARGET: False  # Set to true of the Cas9 being used nicks the
                                 # target strand, set to false otherwise.
@@ -29,3 +23,7 @@ PLASMID_MAP_RENAME_SCHEME: "label-scheme.yml"  # Defines the labels and colors
                                                # some features have long
                                                # ugly names that make plasmid
                                                # maps hard to read.
+
+RUN_BACKUP: True  # Run Rclone based backup.
+BACKUP_REMOTE: 'davis-gdrive:/backups/lab_data/VR-Cas9-workflow'  # Remote Backup location
+                                                                  # do not include / at end of path

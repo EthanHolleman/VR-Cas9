@@ -26,6 +26,8 @@ rule make_fasta_files:
     script:'../scripts/genbank2fasta.py'
 
 
+
+
 # rule split_select_init_seqs:
 #     conda:
 #         '../envs/python.yml'

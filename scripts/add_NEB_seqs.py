@@ -34,7 +34,6 @@ def main():
 
     T7_seq, scaffold = config["T7_PROMOTER"], config["THREE_PRIME_OVERLAP"]
     targets_no_PAM = list(targets_df["target_no_pam"])
-    print(targets_no_PAM)
     NEB_oligos = [
         format_target_seq_for_NEB_kit(T7_seq, scaffold, target_seq)
         for target_seq in targets_no_PAM

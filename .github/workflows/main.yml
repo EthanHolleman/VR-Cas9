@@ -36,4 +36,4 @@ jobs:
       - run: |
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate snakemake
-          snakemake --cores --configfile config.yml --use-conda
+          snakemake --cores --configfile config.yml --use-conda --dry-run

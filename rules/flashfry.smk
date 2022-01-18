@@ -1,4 +1,5 @@
-
+from datetime import datetime
+from pathlib import Path
 
 rule download_flashfry:
     conda:
@@ -116,6 +117,41 @@ rule draw_plasmids_with_targets:
         'output/plasmid-maps-with-targets/{series}/{series_prefix}-{insert_number}.label.targets.png'
     script:'../scripts/plot_targets.py'
 
+
+rule make_IDT_order_tables:
+    conda:
+        '../envs/python.yml'
+    input:
+        'output/selected-scored-NEB/{series}/{series_prefix}-{insert_number}.NEB.selected.targets.scored.tsv'
+    output:
+        'output/IDT-order/{series}/{series_prefix}-{insert_number}.NEB.selected.targets.scored.IDT.tsv'
+    params:
+        name_prefix=lambda wildcards: f'{wildcards.series_prefix}-{wildcards.insert_number}'
+    script:'../scripts/IDT_order.py'
+
+
+rule backup_oligos:
+    input:
+        expand(
+            'output/IDT-order/{series}/{series_prefix}-{insert_number}.NEB.selected.targets.scored.IDT.tsv',
+            insert_number=list(range(1, NUM_INSERTS+1)), series=[config['SERIES_NAME']],
+            series_prefix=config['SERIES_PREFIX']
+        )
+    output:
+        '.backup.done'
+    params:
+        date=lambda wildcards: str(datetime.now()),
+        remote=config['BACKUP_REMOTE'],
+        target_IDT='output/IDT-order/',
+        target_genbank='output/genbank-labeled-with-targets',
+        target_maps='output/plasmid-maps-with-targets'
+
+    shell:'''
+    rclone copy {params.target_IDT} "{params.remote}/{params.date}/{params.target_IDT}" -P
+    rclone copy {params.target_genbank} "{params.remote}/{params.date}/{params.target_genbank}" -P
+    rclone copy {params.target_maps} "{params.remote}/{params.date}/{params.target_maps}" -P
+    touch {output}
+    '''
 
 
 

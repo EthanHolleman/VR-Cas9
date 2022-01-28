@@ -18,10 +18,9 @@ def add_target_no_pam_column(df):
         # if the target site is on the reverse strand. So the PAM site will
         # always be at the end of the sequence string.
         pamless.append(row["target"][:-3])
-    
-    df['target_no_pam'] = pamless
-    return df
 
+    df["target_no_pam"] = pamless
+    return df
 
 
 def main():
@@ -30,10 +29,10 @@ def main():
     df = read_df(score_file)
     df_no_pam = add_target_no_pam_column(df)
     print(df_no_pam)
-    
+
     assert "target_no_pam" in df_no_pam.columns
     assert len(df) == len(df_no_pam)
-    
+
     df_no_pam.to_csv(str(snakemake.output), sep="\t", index=False)
 
 

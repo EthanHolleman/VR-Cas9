@@ -5,3 +5,4 @@ logs/
 output/
 software/
 scripts/find_PAMs.py
+tmp/

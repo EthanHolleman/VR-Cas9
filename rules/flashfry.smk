@@ -92,7 +92,8 @@ rule select_targets:
     output:
         'output/selected-scored-NEB/{series}/{series_prefix}-{insert_number}.NEB.selected.targets.scored.tsv'
     params:
-        config=config
+        config=config,
+        id_dict=lambda wildcards: {'series': wildcards.series, 'insert': wildcards.insert_number}
     script:'../scripts/select_targets.py'
 
 
@@ -128,6 +129,20 @@ rule make_IDT_order_tables:
     params:
         name_prefix=lambda wildcards: f'{wildcards.series_prefix}-{wildcards.insert_number}'
     script:'../scripts/IDT_order.py'
+
+
+rule combine_oligos:
+    conda:
+        '../envs/python.yml'
+    input:
+        expand(
+            'output/selected-scored-NEB/{series}/{series_prefix}-{insert_number}.NEB.selected.targets.scored.tsv',
+            insert_number=list(range(1, NUM_INSERTS+1)), series=[config['SERIES_NAME']],
+            series_prefix=config['SERIES_PREFIX']
+        )
+    output:
+        'output/selected-scored-NEB/{series}-Cas9-unique-oligos.tsv'
+    script:'../scripts/agg_oligos.py'
 
 
 rule backup_oligos:

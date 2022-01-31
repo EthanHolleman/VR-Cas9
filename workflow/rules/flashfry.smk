@@ -19,9 +19,9 @@ rule build_database:
         '../envs/java.yml'
     input:
         ff='software/FlashFry-assembly-1.12.jar',
-        target='output/sequences/fasta/{series}/{series_prefix}-{insert_number}.fa'
+        target=lambda wildcards: samples.loc[samples['seq_name'] == wildcards.seq_name]['genbank_path'].values[0]
     output:
-        'output/databases/{series}/{series_prefix}-{insert_number}'
+        'output/{run}/flashFryDatabases/{seq_name}'
     params:
         enzyme='spcas9ngg'
     shell:'''

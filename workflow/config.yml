@@ -1,0 +1,29 @@
+# Additional sequences requires for cloning in NEB EnGen kit
+# https://www.neb.com/protocols/2016/05/11/engen-sqrna-synthesis-kit-s-pyogenes-protocol-e3322
+T7_PROMOTER: "TTCTAATACGACTCACTATA" 
+THREE_PRIME_OVERLAP: "GTTTTAGAGCTAGA"
+
+
+MIN_DIST: 20  # min distance from start of seq to select targets
+MAX_DIST: 3300  # max distance from start of seq to select targets
+NUM_TARGETS: 15  # number of targets to select
+TARGET_STRAND: "FWD"  # Strand that should be nicked
+NICKED_STRAND_IS_TARGET: False  # Set to true of the Cas9 being used nicks the
+                                # target strand, set to false otherwise.
+
+SERIES_NAME: "T7_initiation_series"  # TODO: Make so don't need these
+SERIES_PREFIX: "T7_init_VR"
+
+PLASMID_MAP_RENAME_SCHEME: "label-scheme.yml"  # Defines the labels and colors
+                                               # that will be used for features
+                                               # when drawing plasmids maps.
+                                               # This is needed because we do
+                                               # not want to draw all features
+                                               # in the base genbank files and
+                                               # some features have long
+                                               # ugly names that make plasmid
+                                               # maps hard to read.
+
+RUN_BACKUP: True  # Run Rclone based backup.
+BACKUP_REMOTE: 'davis-gdrive:/backups/lab_data/VR-Cas9-workflow'  # Remote Backup location
+                                                                  # do not include / at end of path

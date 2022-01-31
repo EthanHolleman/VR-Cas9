@@ -1,0 +1,15 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=2.7
+  - pandas
+  - numpy
+  - scipy
+  - argparse
+  - mysql-python
+  - scikit-learn=0.18.1
+  - biopython
+  - bowtie2
+  - ucsc-twobittofa 

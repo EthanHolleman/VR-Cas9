@@ -27,3 +27,11 @@ PLASMID_MAP_RENAME_SCHEME: "label-scheme.yml"  # Defines the labels and colors
 RUN_BACKUP: True  # Run Rclone based backup.
 BACKUP_REMOTE: 'davis-gdrive:/backups/lab_data/VR-Cas9-workflow'  # Remote Backup location
                                                                   # do not include / at end of path
+# Paths for CHOPCHOP depends, these should not need to change
+# as long as the workflow is run with --use-conda as conda
+# will install these into conda env used by CHOPCHOP rules.
+
+CHOPCHOP_PATHS:
+  PRIMER3: "primer3_core"
+  BOWTIE: "bowtie"
+  TWOBITTOFA: "./twoBitToFa"

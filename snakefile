@@ -4,6 +4,7 @@ NUM_INSERTS = 31
 
 include: 'rules/flashfry.smk'
 include: 'rules/get_seqs.smk'
+include: 'rules/crisprON.smk'
 
 if config['RUN_BACKUP'] == True:
     backup = ['.backup.done']
@@ -21,5 +22,6 @@ rule all:
             'output/selected-scored-NEB/{series}-Cas9-unique-oligos.tsv',
             series=config['SERIES_NAME']
         ),
-        backup
+        backup,
+        'output/crisprON/done.txt'
         

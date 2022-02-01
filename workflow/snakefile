@@ -1,37 +1,22 @@
 from datetime import datetime
 import pandas as pd
 
+include: 'rules/format_targets.smk'
 include: 'rules/flashfry.smk'
-include: 'rules/get_seqs.smk'
+include: 'rules/salt_fries.smk'
+include: 'rules/IDT.smk'
 
-RUN_NAME = f'pFryer-{datetime.now.strftime("%m:%d:%Y:%H:%M:%S")}'
+RUN_NAME = f'pFryer-{datetime.now().strftime("%m:%d:%Y")}'
 samples = pd.read_csv(config['sample_tsv'], sep='\t')
 
-
-
-
-
-
-
-
-
-
-if config['RUN_BACKUP'] == True:
-    backup = ['.backup.done']
-else:
-    backup = []
 
 rule all:
     input:
         expand(
-            'output/plasmid-maps-with-targets/{series}/{series_prefix}-{insert_number}.label.targets.png',
-            insert_number=list(range(1, NUM_INSERTS+1)), series=[config['SERIES_NAME']],
-            series_prefix=config['SERIES_PREFIX']
-            ),
-        expand(
-            'output/IDT-order/{series}/{series_prefix}-{insert_number}.NEB.selected.targets.scored.IDT.tsv',
-            insert_number=list(range(1, NUM_INSERTS+1)), series=[config['SERIES_NAME']],
-            series_prefix=config['SERIES_PREFIX']
+            'output/{run}/IDTOrder/{seq_name}.oligos.tsv',
+            run=RUN_NAME, seq_name=list(samples['seq_name'])
         ),
-        backup
-        
+        expand(
+            'output/{run}/plots/{seq_name}.targets.scored.pamless.NEB.label.png',
+            run=RUN_NAME, seq_name=list(samples['seq_name'])
+        )

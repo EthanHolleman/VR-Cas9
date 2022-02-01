@@ -83,7 +83,7 @@ def select_targets(df, num_targets, force_zero, seq_len, end_offset=0):
         print(df)
         targets.append(df.sort_values("start").iloc[0])
 
-    spread = int((seq_len) / num_targets)
+    spread = int(((seq_len)-end_offset) / num_targets)
     locs = list(np.flip(np.arange(0, seq_len - end_offset, spread)))  # flip for popping
     print(locs, seq_len - end_offset, spread)
 
@@ -105,7 +105,11 @@ def select_targets(df, num_targets, force_zero, seq_len, end_offset=0):
         targets.append(select_target(search_start, search_end))
         targets = [t for t in targets if isinstance(t, pd.Series)]
 
-    return pd.DataFrame(targets)
+    # remove any duplicates
+    
+    targets = pd.DataFrame(targets)
+    targets = targets.drop_duplicates(subset=['target'])
+    return targets
 
 
 def label_select_targets(scored, selected, excluded):

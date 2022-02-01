@@ -1,63 +1,115 @@
 import pandas as pd
 from Bio import SeqIO
+import numpy as np
+from Bio import SeqIO
 
 
-def get_ideal_points(min_dist, max_dist, number_targets):
-    
-    assert max_dist > min_dist
-    usable_length = max_dist - min_dist
-    step = int(usable_length / number_targets)
-    ideal_points = []
-    return [i for i in range(min_dist, max_dist, step)]
+def filter_dangerous(df):
+    """Remove sgRNA's that flashfry deems to have dangerous GC of polyT
+    content.
+
+    Args:
+        df (DataFrame): Pandas df.
+    """
+    print(df)
+    df = df.loc[df["dangerous_GC"] == "NONE"]
+    df = df.loc[df["dangerous_polyT"] == "NONE"]
+    return df
 
 
-def filter_targets_by_strand(df, target_strand, nick_target=False):
-    # nicking occurs on strand opposite target sequence
-    print(target_strand)
-    if nick_target:
-        return df.loc[df["orientation"] == target_strand]
-    else:
-        if target_strand == "FWD":
-            return df.loc[df["orientation"] == "RVS"]
-        elif target_strand == "RVS":
-            return df.loc[df["orientation"] == "FWD"]
-        else:
-            raise TypeError("Target strand must be FWD or REV")
+def filter_high_off_target(df, min_score=0.95):
+    """Remove guides with predicted off targets via the 
+     Doench et al. Nature Biotechnology, 2016 specificity score. Higher
+     scores indicate lower off target potential. Default min value os 0.95
+     as off targets should be very low for plasmid templates. 
+
+    Args:
+        df ([DataFrame]): Pandas df of flashfry produced metrics.
+    """
+    return df.loc[df["DoenchCFD_specificityscore"] > min_score]
 
 
-def target_picker(df, ideal_point, filter_danger=True):
-    # pick closest targets to each ideal point
+def filter_strand(df, strand):
 
-    if filter_danger:
-        df = df.loc[(df["dangerous_GC"] == "NONE") & (df["dangerous_polyT"] == "NONE")]
-
-    return df.iloc[(df["start"] - ideal_point).abs().argsort()[:1]]
+    return df.loc[df["orientation"] == strand]
 
 
-def pick_targets(df, min_dist, max_dist, number_targets, target_strand, nicked_strand):
+def select_targets(df, num_targets, force_zero, seq_len, end_offset=0):
+    """Select final Cas9 target sites, return as a pandas DataFrame.
 
-    ideal_points = get_ideal_points(min_dist, max_dist, number_targets)
-    df_stranded = filter_targets_by_strand(df, target_strand, nicked_strand)
-    target_rows = []
-    for each_point in ideal_points:
-        target_rows.append(target_picker(df_stranded, each_point))
+    Args:
+        df (DataFrame): Input df, should already be filtered.
+        num_targets (int): Number of target sites to select.
+        force_zero (bool): Force selection of closest site to start of sequence.
+        seq_len (int): Length of template sequence.
+        end_offset (int, optional): Length to subtract from total length. Defaults to 0.
 
-    return pd.concat(target_rows)
+    Returns:
+        [dataFrame]: Dataframe of selected target sequences.
+    """
+
+    targets = []
+    if force_zero:
+        print(df)
+        targets.append(df.sort_values("start").iloc[0])
+
+    spread = int((seq_len) / num_targets)
+    locs = list(np.flip(np.arange(0, seq_len - end_offset, spread)))  # flip for popping
+    print(locs, seq_len - end_offset, spread)
+
+    def select_target(search_start, search_end):
+        in_region = df.loc[(df["start"] >= search_start) & (df["stop"] <= search_end)]
+        if len(in_region) > 0:
+            in_region_by_doench = in_region.sort_values(
+                "Doench2014OnTarget", ascending=False
+            )
+            return in_region_by_doench.iloc[0]  # best on target score in defined region
+
+    while locs:
+        cur_loc = locs.pop()
+        print(cur_loc)
+        search_start, search_end = cur_loc - (spread / 1.5), cur_loc + (spread / 1.5)
+        if search_start < 0:
+            search_start = 0
+        if search_end > seq_len:
+            search_end = seq_len
+        targets.append(select_target(search_start, search_end))
+        targets = [t for t in targets if isinstance(t, pd.Series)]
+
+    return pd.DataFrame(targets)
+
+
+def label_select_targets(scored, selected):
+
+    scored["selected"] = False
+    scored.loc[scored.target.isin(selected.target), "selected"] = True
+    return scored
 
 
 def main():
 
-    config = snakemake.params["config"]
-    all_targets = pd.read_csv(str(snakemake.input), sep="\t")
-    targets = pick_targets(
-        all_targets,
-        config["MIN_DIST"],
-        config["MAX_DIST"],
-        config["NUM_TARGETS"],
-        config["TARGET_STRAND"],
-        config["NICKED_STRAND_IS_TARGET"],
+    scored_targets = pd.read_csv(snakemake.input["scored"], sep="\t")
+    # drop dangerous
+    scored_targets = filter_dangerous(scored_targets)
+    scored_targets = filter_high_off_target(scored_targets, snakemake.config["MINOFF"])
+    scored_targets = filter_strand(scored_targets, snakemake.config["STRAND"])
+
+    seq_len = len(SeqIO.read(snakemake.input["fasta"], format="fasta"))
+
+    targets = select_targets(
+        scored_targets,
+        snakemake.config["NUM_TARGETS"],
+        snakemake.config["ZERO_TARGET"],
+        seq_len,
+        snakemake.config["END_OFFSET"],
     )
-    targets.to_csv(str(snakemake.output), sep="\t", index=False)
+
+    all_scored_targets_label = label_select_targets(scored_targets, targets)
+
+    targets.to_csv(str(snakemake.output["selected"]), index=False, sep="\t")
+    all_scored_targets_label.to_csv(
+        snakemake.output["all_labeled"], index=False, sep="\t"
+    )
 
 
 if __name__ == "__main__":

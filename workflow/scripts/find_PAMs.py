@@ -21,7 +21,9 @@ def find_PAMs_in_record(record, PAM_RE=PAM_RE):
     Args:
         record (SeqRecord): SeqRecord to search
     """
-    return [(m.start(0), m.end(0)) for m in re.finditer(PAM_RE, str(record.seq).upper())]
+    return [
+        (m.start(0), m.end(0)) for m in re.finditer(PAM_RE, str(record.seq).upper())
+    ]
 
 
 def make_gRNAs(record, PAM_RE=PAM_RE, gRNA_len=20):

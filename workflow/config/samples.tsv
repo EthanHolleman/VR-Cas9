@@ -1,1 +1,2 @@
-seq_name	genbank_path	start_feature	force_zero_guide	total_guides
+seq_name	genbank_path	start_feature	force_zero_guide	total_guides	strand
+T7Init	data/sequences/T7_init_VR-1.gb	5_prime_HR	TRUE	10	RVS

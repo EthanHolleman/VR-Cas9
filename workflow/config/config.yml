@@ -1,0 +1,11 @@
+sample_tsv: 'config/samples.tsv'
+
+# Sequences used for NEB EnGen sgRNA synthesis kit oligos 
+T7_PROMOTER: "TTCTAATACGACTCACTATA" 
+THREE_PRIME_OVERLAP: "GTTTTAGAGCTAGA"
+
+MINOFF: 0.95
+NUM_TARGETS: 15
+ZERO_TARGET: True
+END_OFFSET: 500
+STRAND: 'RVS'  # FWD or RVS

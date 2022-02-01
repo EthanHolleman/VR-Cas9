@@ -4,7 +4,7 @@ rule reslice_genbank:
     conda:
         '../envs/python.yml'
     output:
-        'output/reslice/genbank/{seq_name}.reslice.fa'
+        'output/{run}/reslice/{seq_name}.reslice.fa'
     params:
         genbank=lambda wildcards: samples.loc[samples['seq_name'] == wildcards.seq_name]['genbank_path'].values[0],
         start_feature=lambda wildcards: samples.loc[samples['seq_name'] == wildcards.seq_name]['start_feature'].values[0]

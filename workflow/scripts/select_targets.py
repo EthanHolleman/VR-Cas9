@@ -10,6 +10,30 @@ def remove_excluded_targets(df, excluded):
     return df[~df.target.isin(common.target)]
 
 
+def remove_excluded_region(df, exclude_start, exclude_stop, seq_len):
+    """Remove potentail target sequences that fall within an excluded range.
+
+    Args:
+        df (DataFrame): DataFrame of all targets to consider.
+        exclude_start (int): Start of exclusion zone.
+        exclude_stop (int): End of exclusion zone.
+        seq_len (int): Length of plasmid sequence (bp).
+
+    Returns:
+        DataFrame: Dataframe containing targets that do not overlap with the
+        excluded region.
+    """
+    
+    if exclude_start == 0 and exclude_stop == 0:
+        return df
+    
+    included_range = np.append(
+        np.arange(0, exclude_start), np.arange(exclude_stop, seq_len)
+    )
+    
+    return df.loc[(df['start'].isin(included_range) ) & (df['stop'].isin(included_range))]
+
+
 def filter_dangerous(df):
     """Remove sgRNA's that flashfry deems to have dangerous GC of polyT
     content.
@@ -73,7 +97,6 @@ def select_targets(df, num_targets, force_zero, seq_len, end_offset=0):
 
     while locs:
         cur_loc = locs.pop()
-        print(cur_loc)
         search_start, search_end = cur_loc - (spread / 1.5), cur_loc + (spread / 1.5)
         if search_start < 0:
             search_start = 0
@@ -85,37 +108,46 @@ def select_targets(df, num_targets, force_zero, seq_len, end_offset=0):
     return pd.DataFrame(targets)
 
 
-def label_select_targets(scored, selected):
+def label_select_targets(scored, selected, excluded):
 
     scored["selected"] = False
     scored.loc[scored.target.isin(selected.target), "selected"] = True
+    scored.loc[scored.target.isin(excluded.target), 'selected'] = 'Excluded'
+    
     return scored
 
 
 def main():
 
     excluded_targets = pd.read_csv(snakemake.params['excluded'], sep='\t')
-    scored_targets = pd.read_csv(snakemake.input["scored"], sep="\t")
-    
-    remove_excluded_targets(scored_targets, excluded_targets)
-    
-    
-    # drop dangerous
-    scored_targets = filter_dangerous(scored_targets)
-    scored_targets = filter_high_off_target(scored_targets, snakemake.config["MINOFF"])
-    scored_targets = filter_strand(scored_targets, snakemake.config["STRAND"])
-
+    all_targets = pd.read_csv(snakemake.input["scored"], sep="\t")
     seq_len = len(SeqIO.read(snakemake.input["fasta"], format="fasta"))
 
+    # drop dangerous
+    scored_targets = filter_dangerous(all_targets)
+    scored_targets = filter_high_off_target(all_targets, snakemake.config["MINOFF"])
+    scored_targets = filter_strand(all_targets, snakemake.config["STRAND"])
+    
+    candidates = remove_excluded_targets(scored_targets, excluded_targets)
+    
+    candidates = remove_excluded_region(
+        scored_targets, snakemake.params['exclude_start'], 
+        snakemake.params['exclude_end'], seq_len
+    )
+
+    
+
     targets = select_targets(
-        scored_targets,
+        candidates,
         snakemake.config["NUM_TARGETS"],
         snakemake.config["ZERO_TARGET"],
         seq_len,
         snakemake.config["END_OFFSET"],
     )
 
-    all_scored_targets_label = label_select_targets(scored_targets, targets)
+    all_scored_targets_label = label_select_targets(
+        scored_targets, targets, excluded_targets
+    )
 
     targets.to_csv(str(snakemake.output["selected"]), index=False, sep="\t")
     all_scored_targets_label.to_csv(

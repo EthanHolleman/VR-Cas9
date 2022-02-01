@@ -31,7 +31,9 @@ rule select_targets:
         selected='output/{run}/selectedScoredTargetsPamlessNEB/{seq_name}.targets.scored.pamless.NEB.selected.tsv',
         all_labeled='output/{run}/selectedScoredTargetsPamlessNEB/{seq_name}.targets.scored.pamless.NEB.label.tsv'
     params:
-        excluded=config['exluded_targets_tsv']
+        excluded=config['exluded_targets_tsv'],
+        exclude_start=lambda wildcards: samples.loc[samples['seq_name'] == wildcards.seq_name]['exclude_start'].values[0],
+        exclude_end=lambda wildcards: samples.loc[samples['seq_name'] == wildcards.seq_name]['exclude_end'].values[0]
     script:'../scripts/select_targets.py'
 
 

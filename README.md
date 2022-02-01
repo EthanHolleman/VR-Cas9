@@ -2,70 +2,84 @@
 
 ![Workflow](https://github.com/EthanHolleman/VR-Cas9/actions/workflows/main.yml/badge.svg)
 
-Identify potential CRISPR-Cas9 targets in VR sequences using [FlashFry](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-018-0545-0).
+Identify potential CRISPR-Cas9 targets in plasmid sequences using [FlashFry](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-018-0545-0), select `n` approximately uniformly distributed
+target sites along the plasmid sequence, design oligos for sgRNA
+synthesis using [NEB enGen sgRNA synthesis kit](https://www.neb.com/products/e3322-engen-sgrna-synthesis-kit-s-pyogenes#Product%20Information) and produce an [IDT](https://www.idtdna.com/pages) oligo order sheet. 
 
 ## Dependencies
 
 - [Conda](https://www.anaconda.com/products/individual)
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/)
+- [Pandas](https://anaconda.org/conda-forge/pandas)
 
 ## Run
 
-The workflow can be run most easily with `snakemake -j 1 --configfile config.yml --use-conda`.
-To run the workflow on a cluster reconfigure `cluster.yml` and `run.sh` to
-work with your system (currently configured for SLURM (UC Davis CRICK)).
+The workflow can be run most easily with `snakemake -j 1 --configfile config/config.yml --use-conda`.
+from the `workflow` directory. To run the workflow on a cluster reconfigure `cluster.yml` and `run.sh` to work with your system (currently configured for SLURM (UC Davis CRICK)).
 
-### Simplified workflow
+## Configuration
 
-![](resources/images/dag.png)
+In order to run the workflow with your own plasmid sequences
+you will need to modify a few configuration files described
+below.
 
-### Configuration
+### `workflow/config/config.yml`
 
-Workflow configuration is done by making changes in the `config.yml` file.
-Current parameters should be considered default. All parameters are explained
-within `config.yml` itself.
+This is the snakemake config file. The parameters are commented
+and explained within the file itself but those with additional
+detail are described below.
 
-## Output
+#### `sample_tsv`
 
-```
-output
-├── databases
-│   └── T7_initiation_series
-├── genbank-labeled-with-targets
-│   └── T7_initiation_series
-├── plasmid-maps-with-targets
-│   └── T7_initiation_series
-├── scored-targets
-│   └── T7_initiation_series
-├── scored-targets-NEB
-│   └── T7_initiation_series
-├── scored-targets-pamless
-│   └── T7_initiation_series
-├── selected-scored-NEB
-│   └── T7_initiation_series
-├── sequences
-│   ├── constructs
-│   │   ├── T7_initiation_series
-│   │   ├── T7_termination_series
-│   │   ├── Tac_initiation_series
-│   │   └── Tac_termination_series
-│   └── fasta
-│       └── T7_initiation_series
-└── targets
-    └── T7_initiation_series
-```
+This should be a filepath relative to where the workflow
+is executed from to a tsv file containing the following
+headers.
 
-`scored-targets` will contain `flashfry` discovered and scored guide RNA
-sequences and metrics as a `tsv` for each VR insert. `selected-scored-targets-NEB`
-will contain the final selected target sequences and the oligos that should
-be ordered for use with NEB sgRNA expression kit. 
+##### `seq_name`
 
-### Target visualization
+Unique ID for the template sequence.
 
-The workflow will also draw a plasmid map showing the location of all selected
-Cas9 target sites. The orientation refers to the direction of the target sequence.
+##### `genbank_path`
 
-![](resources/images/T7_init_VR-1.label.targets.png)
+Path to genbank file containing sequence and annotations for this template. If relative path is used should be relative to workflow execution directory.
+
+##### `start_feature`
+
+Plasmids are circular sequences but are usually described linearly for convenience of assigning exact coordinates to annotations. Often the arbitrary start of a plasmid within a genbank file is not the zero index we want to design sgRNAs relative to. Set this field to the “\label” field of a feature within the genbank file to use that feature as the start of the linearized plasmid.
+
+##### `force_zero_guide`
+
+Normally the workflow tries to evenly distribute a number of target sites throughout the provided plasmid sequence. It may be desirable to place a target site as close to the start of a sequence as possible. Setting this field to “True” forces the workflow to always include the closest target site to the start of the sequence.
+
+##### `total_guides`
+
+Total number of sgRNAs to select. Workflow will attempt to evenly distribute target sites along plasmid sequence.
+
+##### `strand`
+
+Select target sites on the + “FWD” or – “RVS” strand only.
+
+
+#### `exluded_targets_tsv`
+
+Path to a tsv file that described target sequences (including PAM)
+that should not be included in the output. Useful for ensuring
+oligos with specific targets that have already been ordered do
+not show up in the output again. Should contain the following
+fields.
+
+##### `oligo_name`
+
+Unique identifier for the target sequence.
+
+##### `target`
+
+Target sequence to exclude from output.
+
+
+
+
+
 
 
 

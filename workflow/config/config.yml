@@ -1,9 +1,18 @@
+
+# Path to tsv file describing plasmid sequences to search for
+# targets within
 sample_tsv: 'config/samples.tsv'
+
+# Path to tsv file describing target sequences to exclude from
+# final output. Good place to put target sequence of oligos
+# that have already been ordered.
+exluded_targets_tsv: 'data/oligos/exclude.tsv'
 
 # Sequences used for NEB EnGen sgRNA synthesis kit oligos 
 T7_PROMOTER: "TTCTAATACGACTCACTATA" 
 THREE_PRIME_OVERLAP: "GTTTTAGAGCTAGA"
 
+# Target selection parameters
 MINOFF: 0.95
 NUM_TARGETS: 15
 ZERO_TARGET: True

@@ -4,6 +4,12 @@ import numpy as np
 from Bio import SeqIO
 
 
+def remove_excluded_targets(df, excluded):
+    # https://www.kite.com/python/answers/how-to-get-rows-from-a-dataframe-that-are-not-in-another-dataframe-in-python
+    common = df.merge(excluded, on=["target"])
+    return df[~df.target.isin(common.target)]
+
+
 def filter_dangerous(df):
     """Remove sgRNA's that flashfry deems to have dangerous GC of polyT
     content.
@@ -88,7 +94,12 @@ def label_select_targets(scored, selected):
 
 def main():
 
+    excluded_targets = pd.read_csv(snakemake.params['excluded'], sep='\t')
     scored_targets = pd.read_csv(snakemake.input["scored"], sep="\t")
+    
+    remove_excluded_targets(scored_targets, excluded_targets)
+    
+    
     # drop dangerous
     scored_targets = filter_dangerous(scored_targets)
     scored_targets = filter_high_off_target(scored_targets, snakemake.config["MINOFF"])

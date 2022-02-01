@@ -30,6 +30,8 @@ rule select_targets:
     output:
         selected='output/{run}/selectedScoredTargetsPamlessNEB/{seq_name}.targets.scored.pamless.NEB.selected.tsv',
         all_labeled='output/{run}/selectedScoredTargetsPamlessNEB/{seq_name}.targets.scored.pamless.NEB.label.tsv'
+    params:
+        excluded=config['exluded_targets_tsv']
     script:'../scripts/select_targets.py'
 
 

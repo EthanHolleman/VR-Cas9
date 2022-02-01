@@ -8,6 +8,7 @@ Identify potential CRISPR-Cas9 targets in plasmid sequences using [FlashFry](htt
 
 - [Conda](https://www.anaconda.com/products/individual)
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/)
+- [Pandas](https://anaconda.org/conda-forge/pandas)
 
 ## Run
 

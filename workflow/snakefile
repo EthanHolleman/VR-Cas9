@@ -1,22 +1,20 @@
 from datetime import datetime
 import pandas as pd
 
+RUN_NAME = f'pFryer-{datetime.now().strftime("%m:%d:%Y")}'
+samples = pd.read_csv(config['sample_tsv'], sep='\t')
+
+
 include: 'rules/format_targets.smk'
 include: 'rules/flashfry.smk'
 include: 'rules/salt_fries.smk'
 include: 'rules/IDT.smk'
+include: 'rules/finish.smk'
 
-RUN_NAME = f'pFryer-{datetime.now().strftime("%m:%d:%Y")}'
-samples = pd.read_csv(config['sample_tsv'], sep='\t')
 
 
 rule all:
     input:
         expand(
-            'output/{run}/IDTOrder/{seq_name}.oligos.tsv',
-            run=RUN_NAME, seq_name=list(samples['seq_name'])
-        ),
-        expand(
-            'output/{run}/plots/{seq_name}.targets.scored.pamless.NEB.label.png',
-            run=RUN_NAME, seq_name=list(samples['seq_name'])
+            'output/tars/{run_name}.tar.gz', run_name=RUN_NAME
         )

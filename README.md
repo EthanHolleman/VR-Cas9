@@ -59,6 +59,21 @@ Total number of sgRNAs to select. Workflow will attempt to evenly distribute tar
 
 Select target sites on the + “FWD” or – “RVS” strand only.
 
+##### `exclude_start`
+
+Start of region of plasmid (bp index) to exclude targets which overlap. This
+is relative to the feature used in `start_feature` field not the supplied
+genbank file.
+
+##### `exclude_end`
+
+End of region of plasmid (bp index) to exclude targets which overlap. This
+is relative to the feature used in `start_feature` field not the supplied
+genbank file.
+
+If you wish to include all of the plasmid for the target search set
+`exclude_start` and `exclude_end` to `0`.
+
 
 #### `exluded_targets_tsv`
 
@@ -67,6 +82,7 @@ that should not be included in the output. Useful for ensuring
 oligos with specific targets that have already been ordered do
 not show up in the output again. Should contain the following
 fields.
+
 
 ##### `oligo_name`
 

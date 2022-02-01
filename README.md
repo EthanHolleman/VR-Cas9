@@ -60,7 +60,7 @@ Total number of sgRNAs to select. Workflow will attempt to evenly distribute tar
 Select target sites on the + “FWD” or – “RVS” strand only.
 
 
-### `exluded_targets_tsv`
+#### `exluded_targets_tsv`
 
 Path to a tsv file that described target sequences (including PAM)
 that should not be included in the output. Useful for ensuring

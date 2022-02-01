@@ -26,7 +26,7 @@ jobs:
           conda install -n base -c conda-forge mamba
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate base
-          mamba create -c bioconda -c conda-forge -n snakemake snakemake-minimal
+          mamba create -c bioconda -c conda-forge -n snakemake snakemake-minimal pandas
       - name: List files in the repository
         uses: actions/checkout@v2
       - run: |

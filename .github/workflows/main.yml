@@ -35,5 +35,6 @@ jobs:
         uses: actions/checkout@v2
       - run: |
           source ~/miniconda/etc/profile.d/conda.sh
+          cd workflow
           conda activate snakemake
-          snakemake --cores --configfile config.yml --use-conda --dry-run
+          snakemake --cores --configfile config/config.yml --use-conda --dry-run
